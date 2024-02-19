@@ -1,18 +1,19 @@
 package me.muhaimin.githubuser.ui.home
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import me.muhaimin.githubuser.data.remote.response.ResponseUserSearch
 import me.muhaimin.githubuser.data.remote.retrofit.ApiConfig
 import me.muhaimin.githubuser.model.User
 import me.muhaimin.githubuser.utils.Event
+import me.muhaimin.githubuser.utils.SettingPreferences
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(private val pref: SettingPreferences) : ViewModel() {
     private val _listUser = MutableLiveData<List<User>>()
     val listUser: LiveData<List<User>> = _listUser
 
@@ -25,10 +26,6 @@ class HomeViewModel : ViewModel() {
     private val _errorMessage = MutableLiveData<Event<String>>()
     val errorMessage: LiveData<Event<String>> = _errorMessage
 
-    companion object {
-        val TAG = "HomeViewModel"
-    }
-
     fun searchUser(query: String) {
         _isLoading.postValue(true)
 
@@ -39,9 +36,14 @@ class HomeViewModel : ViewModel() {
                 response: Response<ResponseUserSearch>
             ) {
                 _isLoading.postValue(false)
-                if(response.isSuccessful) {
+                if (response.isSuccessful) {
 
-                    _listUser.postValue(response.body()?.items?.map { User(it?.login, it?.avatarUrl) })
+                    _listUser.postValue(response.body()?.items?.map {
+                        User(
+                            it?.login,
+                            it?.avatarUrl
+                        )
+                    })
                 } else {
                     _errorMessage.postValue(Event(response.message()))
                 }
@@ -57,5 +59,9 @@ class HomeViewModel : ViewModel() {
 
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
+    }
+
+    fun getThemeSettings(): LiveData<Boolean> {
+        return pref.getThemeSetting().asLiveData()
     }
 }

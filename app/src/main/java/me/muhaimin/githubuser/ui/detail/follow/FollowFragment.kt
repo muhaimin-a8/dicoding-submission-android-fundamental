@@ -2,11 +2,10 @@ package me.muhaimin.githubuser.ui.detail.follow
 
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,12 +14,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.muhaimin.githubuser.databinding.FragmentFollowBinding
 import me.muhaimin.githubuser.model.User
-import me.muhaimin.githubuser.ui.detail.DetailViewModel
 
 class FollowFragment : Fragment() {
     private lateinit var binding: FragmentFollowBinding
     private lateinit var viewModel: FollowViewModel
-    private lateinit var userDetailVIewModel: DetailViewModel
+//    private val factory = ViewModelFactory.getInstance(requireContext())
+//    private val userDetailVIewModel by viewModels<DetailViewModel> { factory }
 
     companion object {
         val ARG_POSITION = "arg_position"
@@ -32,11 +31,10 @@ class FollowFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentFollowBinding.inflate(layoutInflater, container, false)
 
         viewModel = FollowViewModel()
-        userDetailVIewModel = DetailViewModel()
 
         return binding.root
     }

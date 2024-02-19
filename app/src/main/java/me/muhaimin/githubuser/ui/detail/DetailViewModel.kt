@@ -4,6 +4,10 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import me.muhaimin.githubuser.data.UserFavoriteRepository
+import me.muhaimin.githubuser.data.local.entity.UserFavoriteEntity
 import me.muhaimin.githubuser.data.remote.response.ResponseUserDetail
 import me.muhaimin.githubuser.data.remote.retrofit.ApiConfig
 import me.muhaimin.githubuser.model.UserDetail
@@ -12,9 +16,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DetailViewModel : ViewModel() {
+class DetailViewModel(private val userFavoriteRepository: UserFavoriteRepository) : ViewModel() {
     private val _userDetail = MutableLiveData<UserDetail>()
     val userDetail: LiveData<UserDetail> = _userDetail
+
+    private val _isFavorite = MutableLiveData<Boolean>()
+    val isFavorite: LiveData<Boolean> = _isFavorite
 
     private val _username = MutableLiveData<String>()
     val username: LiveData<String> = _username
@@ -61,6 +68,35 @@ class DetailViewModel : ViewModel() {
             }
 
         })
+
+        isFavoriteUser()
+    }
+
+    fun addUserFavorite() {
+        val userFavorite = UserFavoriteEntity(
+            userDetail.value?.username.toString(),
+            userDetail.value?.fullName.toString()
+        )
+        viewModelScope.launch {
+            userFavoriteRepository.insertUserFavorite(userFavorite)
+        }
+
+        _isFavorite.value = true
+    }
+
+    fun removeUserFavorite() {
+        viewModelScope.launch {
+            userFavoriteRepository.deleteUserFavorite(username.value.toString())
+        }
+        _isFavorite.value = false
+    }
+
+    fun isFavoriteUser(): Boolean {
+        viewModelScope.launch {
+            _isFavorite.value = userFavoriteRepository.isFavoriteUser(username.value.toString())
+        }
+
+        return isFavorite.value ?: false
     }
 
     fun updateUsername(username: String) {

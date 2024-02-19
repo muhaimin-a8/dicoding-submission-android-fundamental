@@ -1,4 +1,4 @@
-package me.muhaimin.githubuser.ui.home
+package me.muhaimin.githubuser.ui.favorite
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,8 +9,8 @@ import com.bumptech.glide.Glide
 import me.muhaimin.githubuser.databinding.ItemUserBinding
 import me.muhaimin.githubuser.model.User
 
-class ListUserAdapter(private val listUser: List<User>) :
-    ListAdapter<User, ListUserAdapter.ViewHolder>(DIFF_CALLBACK) {
+class ListUserFavoriteAdapter(private val listUser: List<User>) :
+    ListAdapter<User, ListUserFavoriteAdapter.ViewHolder>(DIFF_CALLBACK) {
     private lateinit var onItemClickCallback: OnItemClickCallback
 
     fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
